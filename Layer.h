@@ -5,6 +5,12 @@
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
+
+enum activation {
+    log_sigmoid,
+    tan_sigmoid
+};
+
 class Layer {
 private:
     VectorXd m_bias;
@@ -41,8 +47,6 @@ public:
     void setPrevLayerNeuronCount(int prev_layer_neuron_count) { m_prev_layer_neuron_count = prev_layer_neuron_count; }
     [[nodiscard]] int layerIndex() const { return m_layer_index; }
     void setLayerIndex(int layer_index) { m_layer_index = layer_index; }
-
-    void calculate_activations(VectorXd& prev_activations);
 };
 
 

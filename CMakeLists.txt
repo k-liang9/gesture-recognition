@@ -7,6 +7,8 @@ find_package(Eigen3 3.4 REQUIRED HINTS /opt/homebrew/opt/eigen)
 
 add_executable(GestureRecognition main.cpp
         Layer.cpp
-        Layer.h)
+        Layer.h
+        Training/ForwardPropagation.cpp
+        Training/ForwardPropagation.h)
 
 target_link_libraries(GestureRecognition Eigen3::Eigen)

@@ -16,7 +16,3 @@ Layer::Layer(int layer_index, VectorXd bias, MatrixXd weights, int neuron_count,
     m_activations(neuron_count);
     m_activations_gradient(neuron_count, next_layer_neuron_count); //todo: revise row/columns assignment
 }
-
-void Layer::calculate_activations(VectorXd& prev_activations) {
-
-}
