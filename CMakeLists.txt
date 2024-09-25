@@ -9,6 +9,7 @@ add_executable(GestureRecognition main.cpp
         Layer.cpp
         Layer.h
         Training/ForwardPropagation.cpp
-        Training/ForwardPropagation.h)
+        Training/ForwardPropagation.h
+        Global.h)
 
 target_link_libraries(GestureRecognition Eigen3::Eigen)
