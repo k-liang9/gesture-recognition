@@ -1,9 +1,9 @@
-#include "Layer.h"
+#include "Dense.h"
 #include <Eigen/Dense>
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
-Layer::Layer(int layer_index, VectorXd bias, MatrixXd weights, int neuron_count, int prev_layer_neuron_count = 0, int next_layer_neuron_count = 0) :
+Dense::Dense(int layer_index, VectorXd bias, MatrixXd weights, int neuron_count, int prev_layer_neuron_count = 0, int next_layer_neuron_count = 0) :
         m_layer_index{layer_index},
         m_neuron_count{neuron_count},
         m_prev_layer_neuron_count{prev_layer_neuron_count},

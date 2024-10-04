@@ -1,7 +1,8 @@
-#ifndef GESTURERECOGNITION_LAYER_H
-#define GESTURERECOGNITION_LAYER_H
+#ifndef GESTURERECOGNITION_DENSE_H
+#define GESTURERECOGNITION_DENSE_H
 #include <Eigen/Dense>
 #include <utility>
+#include "Layer.h"
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -11,7 +12,7 @@ enum activation {
     tan_sigmoid
 };
 
-class Layer {
+class Dense : public Layer {
 private:
     VectorXd m_bias;
     VectorXd m_bias_gradient{};
@@ -25,7 +26,7 @@ private:
     int m_layer_index{};
 
 public:
-    Layer(int layer_index, VectorXd bias, MatrixXd weights, int neuron_count, int prev_layer_neuron_count, int next_layer_neuron_count);
+    Dense(int layer_index, VectorXd bias, MatrixXd weights, int neuron_count, int prev_layer_neuron_count, int next_layer_neuron_count);
 
     [[nodiscard]] const VectorXd& bias() const { return m_bias; }
     void setBias(const VectorXd& bias) { m_bias = bias; }
@@ -50,4 +51,4 @@ public:
 };
 
 
-#endif //GESTURERECOGNITION_LAYER_H
+#endif //GESTURERECOGNITION_DENSE_H

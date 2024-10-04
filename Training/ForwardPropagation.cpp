@@ -1,5 +1,5 @@
 #include "ForwardPropagation.h"
-#include "../Layer.h"
+#include "../Layers/Dense.h"
 #include <Eigen/Dense>
 
 using Eigen::VectorXd;
