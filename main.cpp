@@ -9,9 +9,9 @@
 	3.	Conv2D(64, (3,3), activation=‘relu’)
 	4.	MaxPooling2D((2,2))
 	5.	Conv2D(128, (3,3), activation=‘relu’)
-	6.	Flatten()
+	6.	Flatten
 	7.	Dense(128, activation=‘relu’)
-	8.	Dropout(0.5)
+	8.	Dropout(0.25)
 	9.	Dense(num_classes, activation=‘softmax’)
  */
 
