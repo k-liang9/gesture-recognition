@@ -13,13 +13,15 @@ class Conv : public Layer {
 private:
     Tensor<double, 4> filter{};
     VectorXd biases{};
-    Tensor<double, 3> feature_map;
+    Tensor<double, 3> feature_map{};
+    VectorXd flat{};
+    Tensor<double, 3> pooled{};
 
 public:
     Conv(Tensor<double, 4> *f, VectorXd* b, activation a);
 
-    void flatten();
-    void pool();
+    void flatten(const Tensor<double, 3>& input);
+    void pool(const Tensor<double, 3>& input, const int pool_size);
     void convolve(const Tensor<double, 3>& input);
 
 public:

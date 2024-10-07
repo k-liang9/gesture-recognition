@@ -3,9 +3,7 @@
 #include <Eigen/Dense>
 #include <unsupported/Eigen/CXX11/Tensor>
 
-using Eigen::MatrixXd;
-using Eigen::Tensor;
-using Eigen::VectorXd;
+using namespace Eigen;
 
 enum activation {
     reLU,
@@ -17,11 +15,10 @@ private:
     activation activ_func{};
 
 public:
-    template <typename T>
-    static void reLU(T&);
+    static void reLU(Tensor<double, 3>& input);
+    static void reLU(VectorXd& input);
 
-    template <typename T>
-    static void softmax(T&);
+    static void softmax(VectorXd& input);
 
     static void extract_layer(Tensor<double, 3> &tensor, MatrixXd &matrix, int i);
 

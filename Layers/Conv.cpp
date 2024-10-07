@@ -2,6 +2,7 @@
 #include "Eigen/Dense"
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <cassert>
+#include <iostream>
 
 using namespace Eigen;
 
@@ -12,12 +13,36 @@ Conv::Conv(Tensor<double, 4> *f, VectorXd* b, activation a) :
     set_activation_func(a);
 }
 
-void Conv::flatten() {
-
+void Conv::flatten(const Tensor<double, 3>& input) {
+    flat.resize(input.size());
+    for (int i = 0; i < input.size(); ++i) {
+        flat(i) = input.data()[i];
+    }
 }
 
-void Conv::pool() {
+void Conv::pool(const Tensor<double, 3>& input, const int pool_size) {
+    pooled = Tensor<double, 3>(input.dimension(0)/pool_size, input.dimension(1)/pool_size, input.dimension(2));
 
+    for (int channel = 0; channel < pooled.dimension(2); ++channel) {
+        for (int pooled_row = 0; pooled_row < pooled.dimension(0); ++pooled_row) {
+            for (int pooled_column = 0; pooled_column < pooled.dimension(1); ++pooled_column) {
+                double max = std::numeric_limits<double>::min();
+                for (int i = 0; i < pool_size; ++i) {
+                    for (int j = 0; j < pool_size; ++j) {
+                        int input_row = pooled_row * pool_size + i;
+                        int input_col = pooled_column * pool_size + j;
+                        if (input_row < input.dimension(0) && input_col < input.dimension(1)) {
+                            double cur = input(input_row, input_col, channel);
+                            if (cur > max) {
+                                max = cur;
+                            }
+                        }
+                    }
+                }
+                pooled(pooled_row, pooled_column, channel) = max;
+            }
+        }
+    }
 }
 
 void Conv::convolve(const Tensor<double, 3>& input) {
