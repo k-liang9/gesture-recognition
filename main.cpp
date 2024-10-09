@@ -14,8 +14,8 @@
 	8.	MaxPooling2D((2, 2))
 	9.	Flatten()
 	10.	Dense(128, activation=‘relu’)
-	11.	Dropout(0.25)
-	12.	Dense(num_classes, activation=‘softmax’)
+	11.	Dropout(0.2)
+	12.	Dense(num_classes, do_activation=‘softmax’)
  */
 
 int main() {

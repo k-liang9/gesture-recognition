@@ -22,6 +22,8 @@ public:
 
     static void extract_layer(Tensor<double, 3> &tensor, MatrixXd &matrix, int i);
 
+    static void do_activation(Layer& layer, auto& pre_activation);
+
     const activation& get_activation_func() const { return activ_func; }
     void set_activation_func(const activation& a) { activ_func = a; }
 };

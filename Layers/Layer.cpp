@@ -30,3 +30,14 @@ void Layer::softmax(VectorXd& input) {
     double sum = input.sum();
     input = input.unaryExpr([sum](double x) {return x/sum;});
 }
+
+void Layer::do_activation(Layer& layer, auto& pre_activation) {
+    switch (layer.get_activation_func()) {
+        case 0: //reLU
+            reLU(pre_activation);
+            break;
+        case 1: //softmax
+            softmax(pre_activation);
+            break;
+    }
+}
