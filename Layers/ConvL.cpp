@@ -1,4 +1,4 @@
-#include "Conv.h"
+#include "ConvL.h"
 #include "Eigen/Dense"
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <cassert>
@@ -6,21 +6,22 @@
 
 using namespace Eigen;
 
-Conv::Conv(Tensor<double, 4> *f, VectorXd* b, activation a) :
+ConvL::ConvL(Tensor<double, 4> *f, VectorXd* b, activation a) :
     filter(*f),
     biases(*b)
 {
     set_activation_func(a);
 }
 
-void Conv::flatten(const Tensor<double, 3>& input) {
+void ConvL::flatten(const Tensor<double, 3>& input) {
     flat.resize(input.size());
     for (int i = 0; i < input.size(); ++i) {
         flat(i) = input.data()[i];
     }
 }
 
-void Conv::pool(const Tensor<double, 3>& input, const int pool_size) {
+//todo: implement more matrix operations
+void ConvL::pool(const Tensor<double, 3>& input, const int pool_size) {
     pooled = Tensor<double, 3>(input.dimension(0)/pool_size, input.dimension(1)/pool_size, input.dimension(2));
 
     for (int channel = 0; channel < pooled.dimension(2); ++channel) {
@@ -45,10 +46,11 @@ void Conv::pool(const Tensor<double, 3>& input, const int pool_size) {
     }
 }
 
-void Conv::convolve(const Tensor<double, 3>& input) {
+//todo: implement more matrix operations
+void ConvL::convolve(const Tensor<double, 3>& input) {
     assert(input.dimension(2) == filter.dimension(2));
 
-    feature_map(input.dimension(0) - filter.dimension(0) + 1,
+    feature_map.resize(input.dimension(0) - filter.dimension(0) + 1,
                 input.dimension(1) - filter.dimension(1) + 1,
                 filter.dimension(3));
 

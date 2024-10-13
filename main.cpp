@@ -1,7 +1,5 @@
 #include <iostream>
-#include "Layers/Dense.h"
-#include "Training/ForwardPropagation.h"
-#include <Eigen/Dense>
+#include "Layers/DenseL/DenseL.h"#include <Eigen/Dense>
 
 /*
  * 	1.	Conv2D(8, (3, 3), activation=‘relu’)
@@ -13,9 +11,11 @@
 	7.	Conv2D(64, (3, 3), activation=‘relu’)
 	8.	MaxPooling2D((2, 2))
 	9.	Flatten()
-	10.	Dense(128, activation=‘relu’)
+	10.	DenseL(128, activation=‘relu’)
 	11.	Dropout(0.2)
-	12.	Dense(num_classes, do_activation=‘softmax’)
+	12.	DenseL(num_classes, calc_activation=‘softmax’)
+
+ Mini-batch training: 32
  */
 
 int main() {

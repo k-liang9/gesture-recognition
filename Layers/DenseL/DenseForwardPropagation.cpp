@@ -1,26 +1,17 @@
-#include "Dense.h"
+#include "DenseL.h"
+#include "../Layer.h"
 #include <Eigen/Dense>
 #include <cassert>
 #include <random>
 
-using Eigen::VectorXd;
-using Eigen::MatrixXd;
+using namespace Eigen;
 
-::Dense::Dense(MatrixXd *w, VectorXd *b, activation a) :
-        weights{*w},
-        biases{*b} {
-    set_activation_func(a);
-    dropout_mask(biases.size());
-    activations(biases.size());
-    assert(weights.rows() == weights.size());
-}
-
-void ::Dense::propagate(MatrixXd& prev_activations) {
+void DenseL::propagate(MatrixXd& prev_activations) {
     assert(prev_activations.size() == weights.cols());
     activations = weights*prev_activations-biases;
 }
 
-void ::Dense::dropout(float dropout_rate) {
+void DenseL::dropout(float dropout_rate) {
     int expected_rate = static_cast<int>(100*dropout_rate);
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -35,6 +26,8 @@ void ::Dense::dropout(float dropout_rate) {
             dropout_mask[i] = 1;
         }
     }
+
+    dropout_used_count += dropout_mask;
 
     float scale = 1.0f/((100.0f-actual_rate)/100.0f);
     for (int i = 0; i < activations.size(); ++i) {

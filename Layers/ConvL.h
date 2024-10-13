@@ -1,5 +1,5 @@
-#ifndef GESTURERECOGNITION_CONV_H
-#define GESTURERECOGNITION_CONV_H
+#ifndef GESTURERECOGNITION_CONVL_H
+#define GESTURERECOGNITION_CONVL_H
 
 #include <Eigen/Dense>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -9,7 +9,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::Tensor;
 
-class Conv : public Layer {
+class ConvL : public Layer {
 private:
     Tensor<double, 4> filter{};
     VectorXd biases{};
@@ -18,7 +18,7 @@ private:
     Tensor<double, 3> pooled{};
 
 public:
-    Conv(Tensor<double, 4> *f, VectorXd* b, activation a);
+    ConvL(Tensor<double, 4> *f, VectorXd* b, activation a);
 
     void flatten(const Tensor<double, 3>& input);
     void pool(const Tensor<double, 3>& input, const int pool_size);
@@ -27,10 +27,10 @@ public:
 public:
     const Tensor<double, 4>& get_filter() const { return filter; }
     void set_filter(const Tensor<double, 4>& f) { filter = f; }
-    const MatrixXd& get_biases() const { return biases; }
-    void set_biases(const MatrixXd& b) { biases = b; }
+    const VectorXd& get_biases() const { return biases; }
+    void set_biases(const VectorXd& b) { biases = b; }
     const Tensor<double, 3>& get_feature_map() const { return feature_map; }
     void set_feature_map(const Tensor<double, 3>& a) { feature_map = a; }
 };
 
-#endif //GESTURERECOGNITION_CONV_H
+#endif //GESTURERECOGNITION_CONVL_H
