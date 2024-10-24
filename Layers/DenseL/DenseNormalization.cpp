@@ -30,8 +30,3 @@ void DenseL::apply_reLU_derivative() {
         }
     }
 }
-
-//categorical cross-entropy loss
-void DenseL::calc_CCEL_derivative(VectorXd &expected) {
-    gradient_logits.col(0) = activations - expected;
-}

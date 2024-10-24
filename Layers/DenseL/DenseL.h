@@ -17,9 +17,10 @@ private:
     MatrixXd gradient_logits{}; //this layer's neuron count * next layer's neuron count
     MatrixXd gradient_sum_weights{};
     VectorXd gradient_sum_biases{};
-    bool used_dropout;
-    DenseL* next_layer;
-    Layer* prev_layer;
+    bool used_dropout{};
+    float dropout_rate{};
+    DenseL* next_layer{};
+    Layer* prev_layer{};
 
 public:
     DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout);
@@ -27,23 +28,24 @@ public:
     void link_layers(DenseL* prev_layer, DenseL* next_layer);
 
     //forward propagation
-    void propagate(MatrixXd& prev_activations);
+    void propagate();
     void dropout(float percent);
     void train_forward(); //todo: 2
 
     //backpropagation
     void calc_loss(VectorXd& expected); //CCEL //stored in gradient_logits as they are parallel
-    void calc_gradient_logits(DenseL next_layer);
-    void calc_gradients_weights();
-    void calc_gradients_biases();
-    void train_backward(); //todo: 2
+    void calc_gradient_logits();
+    void calc_CCEL_derivative(VectorXd &expected);
+    void add_gradient_weights();
+    void add_gradient_biases();
+    void backprop_nonoutput();
+    void backprop_output(VectorXd& expected);
     void change_params();
 
     //normalization
     void reLU();
     void apply_reLU_derivative();
     void softmax();
-    void calc_CCEL_derivative(VectorXd &expected);
 
     const MatrixXd& get_weights() const { return weights; }
     const VectorXd& get_biases() const { return biases; }
@@ -54,6 +56,7 @@ public:
     const MatrixXd& get_gradient_sum_weights() const { return gradient_sum_weights; }
     const VectorXd& get_gradient_sum_biases() const { return gradient_sum_biases; }
     bool get_used_dropout() const { return used_dropout; }
+    float get_dropout_rate() const { return dropout_rate; }
     DenseL* get_next_layer() const { return next_layer; }
     Layer* get_prev_layer() const { return prev_layer; }
 
@@ -67,6 +70,7 @@ public:
     void set_gradient_sum_weights(const MatrixXd& gsw) { gradient_sum_weights = gsw; }
     void set_gradient_sum_biases(const VectorXd& gsb) { gradient_sum_biases = gsb; }
     void set_used_dropout(bool ud) { used_dropout = ud; }
+    void set_dropout_rate(float dr) { dropout_rate = dr; }
     void set_next_layer(DenseL* nl) { next_layer = nl; }
     void set_prev_layer(DenseL* pl) { prev_layer = pl; }
 };

@@ -3,12 +3,13 @@
 #include <Eigen/Dense>
 #include <cassert>
 #include <random>
+#include <iostream>
 
 using namespace Eigen;
 
-void DenseL::propagate(MatrixXd& prev_activations) {
-    assert(prev_activations.size() == weights.cols());
-    activations = weights*prev_activations-biases;
+void DenseL::propagate() {
+    assert(prev_layer->get_activations().size() == weights.cols());
+    activations = weights * prev_layer->get_activations() - biases;
 }
 
 void DenseL::dropout(float dropout_rate) {
@@ -36,5 +37,25 @@ void DenseL::dropout(float dropout_rate) {
         } else {
             activations[i] *= scale;
         }
+    }
+}
+
+void DenseL::train_forward() {
+    propagate();
+
+    if (used_dropout) {
+        dropout(dropout_rate);
+    }
+
+    switch(get_activation_func()) {
+        case 0:
+            reLU();
+            break;
+        case 1:
+            softmax();
+            break;
+        default:
+            std::cout << "invalid activation function";
+            break;
     }
 }
