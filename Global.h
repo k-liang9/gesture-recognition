@@ -3,6 +3,6 @@
 #include <iostream>
 #include <vector>
 namespace Global {
-
+    int batch_size = 32;
 }
 #endif //GESTURERECOGNITION_GLOBAL_H

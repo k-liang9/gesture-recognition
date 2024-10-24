@@ -11,8 +11,8 @@ add_executable(GestureRecognition main.cpp
         Global.h
         Layers/Layer.cpp
         Layers/Layer.h
-        Layers/ConvL.cpp
-        Layers/ConvL.h
+        Layers/ConvL/ConvL.cpp
+        Layers/ConvL/ConvL.h
         Layers/DenseL/DenseForwardPropagation.cpp
         Layers/DenseL/DenseBackPropagation.cpp
         Layers/DenseL/DenseMisc.cpp)

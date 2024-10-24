@@ -6,12 +6,21 @@
 
 using namespace Eigen;
 
-DenseL::DenseL(MatrixXd *w, VectorXd *b, activation a) :
+DenseL::DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout) :
         weights{*w},
-        biases{*b} {
+        biases{*b},
+        used_dropout{dropout} {
     set_activation_func(a);
-    dropout_mask.resize(biases.size());
     activations.resize(biases.size());
-    dropout_used_count.resize(biases.size());
-    assert(weights.rows() == weights.size());
+    dropout_mask.resize(activations.size());
+    dropout_used_count.resize(activations.size());
+    //gradient_logits num rows depend on next layer
+    gradient_sum_weights.resize(weights.rows(), weights.cols());
+    gradient_sum_biases.resize(biases.size());
+}
+
+void DenseL::link_layers(DenseL *prev_layer, DenseL *next_layer) {
+    set_next_layer(next_layer);
+    set_prev_layer(prev_layer);
+    gradient_logits.resize(next_layer->get_activations().size(), activations.size());
 }

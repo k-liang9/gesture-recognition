@@ -10,9 +10,10 @@ enum activation {
     softmax
 };
 
-class Layer { //TODO: reorganize layers 0
+class Layer {
 private:
     activation activ_func{};
+    VectorXd activations{};
 
 public:
     static void reLU(Tensor<double, 3>& input);
@@ -21,6 +22,8 @@ public:
 
     const activation& get_activation_func() const { return activ_func; }
     void set_activation_func(const activation& a) { activ_func = a; }
+    const VectorXd& get_activations() const { return activations; }
+    void set_activations(const VectorXd& a) { activations = a; }
 };
 
 

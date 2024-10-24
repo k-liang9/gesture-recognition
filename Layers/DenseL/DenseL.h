@@ -12,14 +12,19 @@ private:
     MatrixXd weights{};
     VectorXd biases{};
     VectorXd activations{};
-    VectorXd dropout_mask{};
-    VectorXd dropout_used_count{};
+    VectorXi dropout_mask{};
+    VectorXi dropout_used_count{};
     MatrixXd gradient_logits{}; //this layer's neuron count * next layer's neuron count
     MatrixXd gradient_sum_weights{};
     VectorXd gradient_sum_biases{};
+    bool used_dropout;
+    DenseL* next_layer;
+    Layer* prev_layer;
 
 public:
-    DenseL(MatrixXd *w, VectorXd *b, activation a); //todo: add next layer info, add new member variable declarations, add backprop variable resizings
+    DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout);
+
+    void link_layers(DenseL* prev_layer, DenseL* next_layer);
 
     //forward propagation
     void propagate(MatrixXd& prev_activations);
@@ -27,11 +32,12 @@ public:
     void train_forward(); //todo: 2
 
     //backpropagation
-    void calc_cost(VectorXd& expected); //stored in gradient_logits as they are parallel todo: CCEL
-    void calc_gradient_activations(DenseL next_layer); //todo: 1
-    void calc_gradients_weights(); //todo: 1
-    void calc_gradients_biases(); //todo: 1
+    void calc_loss(VectorXd& expected); //CCEL //stored in gradient_logits as they are parallel
+    void calc_gradient_logits(DenseL next_layer);
+    void calc_gradients_weights();
+    void calc_gradients_biases();
     void train_backward(); //todo: 2
+    void change_params();
 
     //normalization
     void reLU();
@@ -40,19 +46,29 @@ public:
     void calc_CCEL_derivative(VectorXd &expected);
 
     const MatrixXd& get_weights() const { return weights; }
-    void set_weights(const MatrixXd& w) { weights = w; }
-    const VectorXd& get_bias() const { return biases; }
-    void set_bias(const VectorXd& b) { biases = b; }
-    const VectorXd& get_dropout_mask() const { return dropout_mask; }
-    void set_dropout_mask(const VectorXd& mask) { dropout_mask = mask; }
-    const VectorXd& get_dropout_used_count() const { return dropout_used_count; }
-    void set_dropout_used_count(const VectorXd& count) { dropout_used_count = count; }
-    const MatrixXd& get_gradient_activations() const { return gradient_logits; }
-    void set_gradient_activations(const MatrixXd& activations) { gradient_logits = activations; }
+    const VectorXd& get_biases() const { return biases; }
+    const VectorXd& get_activations() const { return activations; }
+    const VectorXi& get_dropout_mask() const { return dropout_mask; }
+    const VectorXi& get_dropout_used_count() const { return dropout_used_count; }
+    const MatrixXd& get_gradient_logits() const { return gradient_logits; }
     const MatrixXd& get_gradient_sum_weights() const { return gradient_sum_weights; }
-    void set_gradient_sum_weights(const MatrixXd& weights) { gradient_sum_weights = weights; }
     const VectorXd& get_gradient_sum_biases() const { return gradient_sum_biases; }
-    void set_gradient_sum_biases(const VectorXd& biases) { gradient_sum_biases = biases; }
+    bool get_used_dropout() const { return used_dropout; }
+    DenseL* get_next_layer() const { return next_layer; }
+    Layer* get_prev_layer() const { return prev_layer; }
+
+    // Setters
+    void set_weights(const MatrixXd& w) {}
+    void set_biases(const VectorXd& b) { biases = b; }
+    void set_activations(const VectorXd& a) { activations = a; }
+    void set_dropout_mask(const VectorXi& dm) { dropout_mask = dm; }
+    void set_dropout_used_count(const VectorXi& duc) { dropout_used_count = duc; }
+    void set_gradient_logits(const MatrixXd& gl) { gradient_logits = gl; }
+    void set_gradient_sum_weights(const MatrixXd& gsw) { gradient_sum_weights = gsw; }
+    void set_gradient_sum_biases(const VectorXd& gsb) { gradient_sum_biases = gsb; }
+    void set_used_dropout(bool ud) { used_dropout = ud; }
+    void set_next_layer(DenseL* nl) { next_layer = nl; }
+    void set_prev_layer(DenseL* pl) { prev_layer = pl; }
 };
 
 

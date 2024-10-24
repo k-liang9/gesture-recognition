@@ -14,9 +14,9 @@ ConvL::ConvL(Tensor<double, 4> *f, VectorXd* b, activation a) :
 }
 
 void ConvL::flatten(const Tensor<double, 3>& input) {
-    flat.resize(input.size());
+    activations.resize(input.size());
     for (int i = 0; i < input.size(); ++i) {
-        flat(i) = input.data()[i];
+        activations(i) = input.data()[i];
     }
 }
 
