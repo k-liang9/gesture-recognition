@@ -11,7 +11,6 @@ class DenseL : public Layer {
 private:
     MatrixXd weights{};
     VectorXd biases{};
-    VectorXd activations{};
     VectorXi dropout_mask{};
     VectorXi dropout_used_count{};
     MatrixXd gradient_logits{}; //this layer's neuron count * next layer's neuron count
@@ -19,18 +18,15 @@ private:
     VectorXd gradient_sum_biases{};
     bool used_dropout{};
     float dropout_rate{};
-    DenseL* next_layer{};
-    Layer* prev_layer{};
 
 public:
     DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout);
-
-    void link_layers(DenseL* prev_layer, DenseL* next_layer);
+    void setup_neighbour_layers();
 
     //forward propagation
     void propagate();
     void dropout(float percent);
-    void train_forward(); //todo: 2
+    void train_forward();
 
     //backpropagation
     void calc_loss(VectorXd& expected); //CCEL //stored in gradient_logits as they are parallel
@@ -47,9 +43,9 @@ public:
     void apply_reLU_derivative();
     void softmax();
 
+    //getters
     const MatrixXd& get_weights() const { return weights; }
     const VectorXd& get_biases() const { return biases; }
-    const VectorXd& get_activations() const { return activations; }
     const VectorXi& get_dropout_mask() const { return dropout_mask; }
     const VectorXi& get_dropout_used_count() const { return dropout_used_count; }
     const MatrixXd& get_gradient_logits() const { return gradient_logits; }
@@ -57,13 +53,10 @@ public:
     const VectorXd& get_gradient_sum_biases() const { return gradient_sum_biases; }
     bool get_used_dropout() const { return used_dropout; }
     float get_dropout_rate() const { return dropout_rate; }
-    DenseL* get_next_layer() const { return next_layer; }
-    Layer* get_prev_layer() const { return prev_layer; }
 
-    // Setters
+    //setters
     void set_weights(const MatrixXd& w) {}
     void set_biases(const VectorXd& b) { biases = b; }
-    void set_activations(const VectorXd& a) { activations = a; }
     void set_dropout_mask(const VectorXi& dm) { dropout_mask = dm; }
     void set_dropout_used_count(const VectorXi& duc) { dropout_used_count = duc; }
     void set_gradient_logits(const MatrixXd& gl) { gradient_logits = gl; }
@@ -71,8 +64,6 @@ public:
     void set_gradient_sum_biases(const VectorXd& gsb) { gradient_sum_biases = gsb; }
     void set_used_dropout(bool ud) { used_dropout = ud; }
     void set_dropout_rate(float dr) { dropout_rate = dr; }
-    void set_next_layer(DenseL* nl) { next_layer = nl; }
-    void set_prev_layer(DenseL* pl) { prev_layer = pl; }
 };
 
 

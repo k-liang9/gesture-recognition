@@ -8,11 +8,12 @@
 using namespace Eigen;
 
 void DenseL::propagate() {
-    assert(prev_layer->get_activations().size() == weights.cols());
-    activations = weights * prev_layer->get_activations() - biases;
+    assert(get_prev_layer()->get_activations().size() == weights.cols());
+    get_activations() = weights * get_prev_layer()->get_activations() - biases;
 }
 
 void DenseL::dropout(float dropout_rate) {
+    VectorXd& activations = get_activations();
     int expected_rate = static_cast<int>(100*dropout_rate);
     std::random_device rd;
     std::mt19937 gen(rd());

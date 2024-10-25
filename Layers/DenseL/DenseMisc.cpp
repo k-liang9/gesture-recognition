@@ -1,8 +1,6 @@
 #include "DenseL.h"
 #include "../Layer.h"
 #include <Eigen/Dense>
-#include <cassert>
-#include <random>
 
 using namespace Eigen;
 
@@ -11,6 +9,7 @@ DenseL::DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout) :
         biases{*b},
         used_dropout{dropout} {
     set_activation_func(a);
+    VectorXd activations = get_activations();
     activations.resize(biases.size());
     dropout_mask.resize(activations.size());
     dropout_used_count.resize(activations.size());
@@ -18,8 +17,6 @@ DenseL::DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout) :
     gradient_sum_biases.resize(biases.size());
 }
 
-void DenseL::link_layers(DenseL *prev_layer, DenseL *next_layer) {
-    set_next_layer(next_layer);
-    set_prev_layer(prev_layer);
-    gradient_logits.resize(next_layer->get_activations().size(), activations.size());
+void DenseL::setup_neighbour_layers() {
+    gradient_logits.resize(get_next_layer()->get_activations().size(), activations.size());
 }

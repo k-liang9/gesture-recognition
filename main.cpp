@@ -1,5 +1,6 @@
 #include <iostream>
-#include "Layers/DenseL/DenseL.h"#include <Eigen/Dense>
+#include "Layers/DenseL/DenseL.h"
+#include <Eigen/Dense>
 
 /*
  * 	1.	Conv2D(8, (3, 3), activation=‘relu’)

@@ -11,10 +11,13 @@ add_executable(GestureRecognition main.cpp
         Global.h
         Layers/Layer.cpp
         Layers/Layer.h
-        Layers/ConvL/ConvL.cpp
+        Layers/ConvL/ConvForwardPropagation.cpp
         Layers/ConvL/ConvL.h
         Layers/DenseL/DenseForwardPropagation.cpp
         Layers/DenseL/DenseBackPropagation.cpp
-        Layers/DenseL/DenseMisc.cpp)
+        Layers/DenseL/DenseMisc.cpp
+        Layers/ConvL/ConvBackPropagation.cpp
+        Layers/ConvL/ConvNormalization.cpp
+        Layers/ConvL/ConvMisc.cpp)
 
 target_link_libraries(GestureRecognition Eigen3::Eigen)

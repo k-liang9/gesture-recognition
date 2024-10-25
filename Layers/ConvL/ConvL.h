@@ -14,25 +14,33 @@ private:
     Tensor<double, 4> filter{};
     VectorXd biases{};
     Tensor<double, 3> feature_map{};
-    VectorXd activations{};
     Tensor<double, 3> pooled{};
 
 public:
+    //misc
     ConvL(Tensor<double, 4> *f, VectorXd* b, activation a);
+    void setup_neighbour_layers(); //todo
 
+    //forward propagation
     void flatten(const Tensor<double, 3>& input);
     void pool(const Tensor<double, 3>& input, const int pool_size);
     void convolve(const Tensor<double, 3>& input);
 
-public:
+    //backprop
+
+    //normalization
+    void reLU();
+    void apply_reLU_derivative(); //todo
+
+    //getters
     const Tensor<double, 4>& get_filter() const { return filter; }
-    void set_filter(const Tensor<double, 4>& f) { filter = f; }
     const VectorXd& get_biases() const { return biases; }
-    void set_biases(const VectorXd& b) { biases = b; }
     const Tensor<double, 3>& get_feature_map() const { return feature_map; }
+
+    //setters
+    void set_filter(const Tensor<double, 4>& f) { filter = f; }
+    void set_biases(const VectorXd& b) { biases = b; }
     void set_feature_map(const Tensor<double, 3>& a) { feature_map = a; }
-    const VectorXd& get_activations() const { return activations; }
-    void set_activations(VectorXd& a) { activations = a; }
 };
 
 #endif //GESTURERECOGNITION_CONVL_H
