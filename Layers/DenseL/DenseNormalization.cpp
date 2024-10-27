@@ -24,12 +24,12 @@ void DenseL::softmax() {
 
 void DenseL::apply_reLU_derivative() {
     VectorXd& activations = get_activations();
-    assert(activations.size() == gradient_logits.rows());
+    assert(activations.size() == gradient_logits.size());
     for (int i = 0; i < activations.size(); ++i) {
         if (activations[i] > 0) {
-            gradient_logits.row(i) *= 1;
+            gradient_logits[i] *= 1;
         } else {
-            gradient_logits.row(i).setZero();
+            gradient_logits[i] = 0;
         }
     }
 }

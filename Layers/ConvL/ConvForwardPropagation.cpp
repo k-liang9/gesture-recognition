@@ -14,17 +14,19 @@ void ConvL::flatten(const Tensor<double, 3>& input) {
     }
 }
 
-void ConvL::pool(const Tensor<double, 3>& input, const int pool_size) {
+void ConvL::pool(const Tensor<double, 3>& input) {
     int pooled_rows = input.dimension(0) / pool_size;
     int pooled_cols = input.dimension(1) / pool_size;
     int channels = input.dimension(2);
 
     pooled.resize(pooled_rows, pooled_cols, channels);
+    pooled_index.resize(pooled_rows, pooled_cols, channels);
 
     for (int channel = 0; channel < channels; ++channel) {
         for (int pooled_row = 0; pooled_row < pooled_rows; ++pooled_row) {
             for (int pooled_col = 0; pooled_col < pooled_cols; ++pooled_col) {
                 double max_val = std::numeric_limits<double>::lowest();
+                std::pair<int, int> max_index{};
                 for (int i = 0; i < pool_size; ++i) {
                     for (int j = 0; j < pool_size; ++j) {
                         int input_row = pooled_row * pool_size + i;
@@ -33,11 +35,13 @@ void ConvL::pool(const Tensor<double, 3>& input, const int pool_size) {
                             double cur_val = input(input_row, input_col, channel);
                             if (cur_val > max_val) {
                                 max_val = cur_val;
+                                max_index = {i, j};
                             }
                         }
                     }
                 }
                 pooled(pooled_row, pooled_col, channel) = max_val;
+                pooled_index(pooled_row, pooled_col, channel) = max_index;
             }
         }
     }

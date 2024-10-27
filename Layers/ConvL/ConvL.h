@@ -14,23 +14,27 @@ private:
     Tensor<double, 4> filter{};
     VectorXd biases{};
     Tensor<double, 3> feature_map{};
+    const int pool_size{2};
     Tensor<double, 3> pooled{};
+    Tensor<std::pair<int, int>, 3> pooled_index{};
+    Tensor<double, 3> pooled_gradient{};
 
 public:
     //misc
     ConvL(Tensor<double, 4> *f, VectorXd* b, activation a);
-    void setup_neighbour_layers(); //todo
+    void setup_neighbour_layers(); //todo: is this needed?
 
     //forward propagation
     void flatten(const Tensor<double, 3>& input);
-    void pool(const Tensor<double, 3>& input, const int pool_size);
+    void pool(const Tensor<double, 3>& input);
     void convolve(const Tensor<double, 3>& input);
 
     //backprop
+    void unflatten();
 
     //normalization
     void reLU();
-    void apply_reLU_derivative(); //todo
+    void apply_reLU_derivative();
 
     //getters
     const Tensor<double, 4>& get_filter() const { return filter; }

@@ -7,26 +7,25 @@
 using namespace Eigen;
 
 void DenseL::add_gradient_biases() {
-    assert(gradient_sum_biases.size() == gradient_logits.rows());
-    gradient_sum_biases += gradient_logits.rowwise().sum();
+    assert(gradient_sum_biases.size() == gradient_logits.size());
+    gradient_sum_biases += gradient_logits;
 }
 
 void DenseL::add_gradient_weights() {
-    assert(gradient_sum_weights.rows() == gradient_logits.rows() && gradient_sum_weights.cols() == get_activations().size());
-    gradient_sum_weights += gradient_logits * get_prev_layer()->get_activations().transpose();
+    assert(gradient_sum_weights.cols() == get_activations().size());
+    gradient_sum_weights += get_prev_layer()->get_activations().transpose() * gradient_logits;
 }
 
 void DenseL::calc_gradient_logits() {
     DenseL* next_layer = dynamic_cast<DenseL*>(get_next_layer());
-    assert(gradient_logits.rows() == next_layer->get_weights().cols() && gradient_logits.cols() == next_layer->get_gradient_logits().cols());
-    gradient_logits.resize(next_layer->get_weights().cols(), next_layer->get_gradient_logits().cols());
-    gradient_logits = next_layer->get_weights().transpose() * next_layer->get_gradient_logits();
+    assert(gradient_logits.size() == next_layer->get_weights().cols());
+    gradient_logits = (next_layer->get_weights().transpose() * next_layer->get_gradient_logits()).rowwise().sum();
     apply_reLU_derivative();
 }
 
 //categorical cross-entropy loss
 void DenseL::calc_CCEL_derivative(VectorXd &expected) {
-    gradient_logits.col(0) = get_activations() - expected;
+    gradient_logits = get_activations() - expected;
 }
 
 
@@ -62,4 +61,5 @@ void DenseL::change_params() {
     }
 
     biases -= gradient_biases;
+    weights -= gradient_weights;
 }

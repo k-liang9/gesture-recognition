@@ -13,10 +13,11 @@ DenseL::DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout) :
     activations.resize(biases.size());
     dropout_mask.resize(activations.size());
     dropout_used_count.resize(activations.size());
+    gradient_logits.resize(activations.size());
     gradient_sum_weights.resize(weights.rows(), weights.cols());
     gradient_sum_biases.resize(biases.size());
 }
 
 void DenseL::setup_neighbour_layers() {
-    gradient_logits.resize(get_next_layer()->get_activations().size(), activations.size());
+
 }

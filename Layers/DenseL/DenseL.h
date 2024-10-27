@@ -13,7 +13,7 @@ private:
     VectorXd biases{};
     VectorXi dropout_mask{};
     VectorXi dropout_used_count{};
-    MatrixXd gradient_logits{}; //this layer's neuron count * next layer's neuron count
+    VectorXd gradient_logits{};
     MatrixXd gradient_sum_weights{};
     VectorXd gradient_sum_biases{};
     bool used_dropout{};
@@ -21,7 +21,7 @@ private:
 
 public:
     DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout);
-    void setup_neighbour_layers();
+    void setup_neighbour_layers(); //todo: is this needed?
 
     //forward propagation
     void propagate();
@@ -37,6 +37,7 @@ public:
     void backprop_nonoutput();
     void backprop_output(VectorXd& expected);
     void change_params();
+    void reset_gradients();
 
     //normalization
     void reLU();
@@ -48,7 +49,7 @@ public:
     const VectorXd& get_biases() const { return biases; }
     const VectorXi& get_dropout_mask() const { return dropout_mask; }
     const VectorXi& get_dropout_used_count() const { return dropout_used_count; }
-    const MatrixXd& get_gradient_logits() const { return gradient_logits; }
+    const VectorXd& get_gradient_logits() const { return gradient_logits; }
     const MatrixXd& get_gradient_sum_weights() const { return gradient_sum_weights; }
     const VectorXd& get_gradient_sum_biases() const { return gradient_sum_biases; }
     bool get_used_dropout() const { return used_dropout; }
@@ -59,7 +60,7 @@ public:
     void set_biases(const VectorXd& b) { biases = b; }
     void set_dropout_mask(const VectorXi& dm) { dropout_mask = dm; }
     void set_dropout_used_count(const VectorXi& duc) { dropout_used_count = duc; }
-    void set_gradient_logits(const MatrixXd& gl) { gradient_logits = gl; }
+    void set_gradient_logits(const VectorXd& gl) { gradient_logits = gl; }
     void set_gradient_sum_weights(const MatrixXd& gsw) { gradient_sum_weights = gsw; }
     void set_gradient_sum_biases(const VectorXd& gsb) { gradient_sum_biases = gsb; }
     void set_used_dropout(bool ud) { used_dropout = ud; }

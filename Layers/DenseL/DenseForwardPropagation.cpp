@@ -60,3 +60,10 @@ void DenseL::train_forward() {
             break;
     }
 }
+
+void DenseL::reset_gradients() {
+    dropout_used_count.setZero();
+    gradient_logits.setZero();
+    gradient_sum_weights.setZero();
+    gradient_sum_biases.setZero();
+}
