@@ -6,18 +6,18 @@
 
 using namespace Eigen;
 
-void ConvL::flatten(const Tensor<double, 3>& input) {
+void ConvL::flatten() {
     VectorXd& activations = get_activations();
-    activations.resize(input.size());
-    for (int i = 0; i < input.size(); ++i) {
-        activations(i) = input.data()[i];
+    activations.resize(pooled.size());
+    for (int i = 0; i < pooled.size(); ++i) {
+        activations(i) = pooled.data()[i];
     }
 }
 
-void ConvL::pool(const Tensor<double, 3>& input) {
-    int pooled_rows = input.dimension(0) / pool_size;
-    int pooled_cols = input.dimension(1) / pool_size;
-    int channels = input.dimension(2);
+void ConvL::pool() {
+    int pooled_rows = feature_map.dimension(0) / pool_size;
+    int pooled_cols = feature_map.dimension(1) / pool_size;
+    int channels = feature_map.dimension(2);
 
     pooled.resize(pooled_rows, pooled_cols, channels);
     pooled_index.resize(pooled_rows, pooled_cols, channels);
@@ -31,8 +31,8 @@ void ConvL::pool(const Tensor<double, 3>& input) {
                     for (int j = 0; j < pool_size; ++j) {
                         int input_row = pooled_row * pool_size + i;
                         int input_col = pooled_col * pool_size + j;
-                        if (input_row < input.dimension(0) && input_col < input.dimension(1)) {
-                            double cur_val = input(input_row, input_col, channel);
+                        if (input_row < feature_map.dimension(0) && input_col < feature_map.dimension(1)) {
+                            double cur_val = feature_map(input_row, input_col, channel);
                             if (cur_val > max_val) {
                                 max_val = cur_val;
                                 max_index = {i, j};

@@ -17,7 +17,10 @@ private:
     const int pool_size{2};
     Tensor<double, 3> pooled{};
     Tensor<std::pair<int, int>, 3> pooled_index{};
-    Tensor<double, 3> pooled_gradient{};
+    Tensor<double, 3> gradient_pooled{};
+    Tensor<double, 4> gradient_sum_filter{};
+    VectorXd gradient_sum_biases{};
+    Tensor<double, 3> gradient_feature_map{};
 
 public:
     //misc
@@ -25,26 +28,37 @@ public:
     void setup_neighbour_layers(); //todo: is this needed?
 
     //forward propagation
-    void flatten(const Tensor<double, 3>& input);
-    void pool(const Tensor<double, 3>& input);
+    void flatten();
+    void pool();
     void convolve(const Tensor<double, 3>& input);
+    void train_forward_final();
+    void train_forward();
 
     //backprop
     void unflatten();
+    void copy_next_gradient();
+    void unpool();
+    //unflatten/copy gradient, unrelu, unpool todo: get filter gradient, get bias gradient, get feature map gradient
 
     //normalization
     void reLU();
     void apply_reLU_derivative();
 
     //getters
-    const Tensor<double, 4>& get_filter() const { return filter; }
-    const VectorXd& get_biases() const { return biases; }
-    const Tensor<double, 3>& get_feature_map() const { return feature_map; }
+    const Tensor<double, 3>& get_pooled() const { return pooled; }
+    const Tensor<std::pair<int, int>, 3>& get_pooled_index() const { return pooled_index; }
+    const Tensor<double, 3>& get_gradient_pooled() const { return gradient_pooled; }
+    const Tensor<double, 4>& get_gradient_sum_filter() const { return gradient_sum_filter; }
+    const VectorXd& get_gradient_sum_biases() const { return gradient_sum_biases; }
+    const Tensor<double, 3>& get_gradient_feature_map() const { return gradient_feature_map; }
 
     //setters
-    void set_filter(const Tensor<double, 4>& f) { filter = f; }
-    void set_biases(const VectorXd& b) { biases = b; }
-    void set_feature_map(const Tensor<double, 3>& a) { feature_map = a; }
+    void set_pooled(const Tensor<double, 3>& p) { pooled = p; }
+    void set_pooled_index(const Tensor<std::pair<int, int>, 3>& pi) { pooled_index = pi; }
+    void set_gradient_pooled(const Tensor<double, 3>& gp) { gradient_pooled = gp; }
+    void set_gradient_sum_filter(const Tensor<double, 4>& gsf) { gradient_sum_filter = gsf; }
+    void set_gradient_sum_biases(const VectorXd& gsb) { gradient_sum_biases = gsb; }
+    void set_gradient_feature_map(const Tensor<double, 3>& gfm) { gradient_feature_map = gfm; }
 };
 
 #endif //GESTURERECOGNITION_CONVL_H

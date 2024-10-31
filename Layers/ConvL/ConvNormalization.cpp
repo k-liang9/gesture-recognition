@@ -11,3 +11,14 @@ void ConvL::reLU() {
         }
     }
 }
+
+void ConvL::apply_reLU_derivative() {
+    for (int i = 0; i < gradient_pooled.size(); ++i) {
+        double& cur = gradient_pooled.data()[i];
+        if (cur > 0) {
+            cur *= 1;
+        } else {
+            cur = 0;
+        }
+    }
+}
