@@ -72,8 +72,9 @@ void ConvL::convolve(const Tensor<double, 3>& input) {
         for (int i = 0; i < feature_map_rows; ++i) {
             for (int j = 0; j < feature_map_cols; ++j) {
                 //create patches
-                Eigen::Tensor<double, 3> filter_slice = filter.chip(filter_index, 3);
-                Eigen::Tensor<double, 3> input_slice = input.slice(Eigen::array<long, 3>{i, j, 0}, filter_slice.dimensions());
+                Tensor<double, 3> filter_slice = filter.chip(filter_index, 3);
+                Tensor<double, 3> input_slice = input.slice(Eigen::array<long, 3>{i, j, 0},
+                                                            filter_slice.dimensions());
 
                 //sum resulting patch
                 Tensor<double, 3> result = (filter_slice * input_slice).sum();
