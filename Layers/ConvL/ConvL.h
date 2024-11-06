@@ -28,6 +28,10 @@ public:
     //misc
     ConvL(Tensor<double, 4> *f, VectorXd* b, activation a);
     void setup_neighbour_layers(); //todo: is this needed?
+    void convolve(const Tensor<double, 2>& input, const Tensor<double, 2>& kernel,
+                  Tensor<double, 2>& output);
+    void convolve_full(const Tensor<double, 2>& input, const Tensor<double, 2>& kernel,
+                       Tensor<double, 2>& output);
 
     //forward propagation
     void flatten();
@@ -40,7 +44,7 @@ public:
     void unflatten();
     void copy_next_gradient();
     void unpool();
-    void calc_gradient_feature_map();
+    void calc_gradient_feature_map(); //full convolution(F, 180˚ rotated loss gradient)
     void add_gradient_filters();
     void add_gradient_biases();
     //unflatten/copy gradient, unrelu, unpool todo: get filter gradient, get bias gradient, get feature map gradient

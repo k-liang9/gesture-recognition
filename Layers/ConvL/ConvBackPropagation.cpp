@@ -70,6 +70,7 @@ void ConvL::add_gradient_filters() {
         for (int channel = 0; channel < input_channels; ++channel) {
             for (int row = 0; row < feature_map.dimension(0) - filter_rows; ++row) {
                 for (int col = 0; col < feature_map.dimension(1) - filter_cols; ++col) {
+                    //todo: use convolve function instead of whatever's under here
                     double gradient = gradient_unpooled(row, col, filter_index);
                     for (int i = 0; i < filter_rows; ++i) {
                         for (int j = 0; j < filter_cols; ++j) {
@@ -81,4 +82,10 @@ void ConvL::add_gradient_filters() {
             }
         }
     }
+
+    //todo: set to 0 after changing params;
+}
+
+void ConvL::calc_gradient_feature_map() {
+    gradient_feature_map.setZero();
 }
