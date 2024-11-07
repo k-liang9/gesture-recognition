@@ -61,29 +61,23 @@ void ConvL::unpool() {
 }
 
 void ConvL::add_gradient_filters() {
-    int filter_rows = filter.dimension(0);
-    int filter_cols = filter.dimension(1);
     int input_channels = filter.dimension(2);
     int num_filters = filter.dimension(3);
 
-    for (int filter_index = 0; filter_index < num_filters; ++filter_index) { //per filter: this indexes the depth of this layer's fature map
+    assert(input_channels == feature_map.dimension(2));
+    assert(num_filters == gradient_unpooled.dimension(2));
+
+    for (int filter_index = 0; filter_index < num_filters; ++filter_index) { //per filter: this indexes the depth of this layer's feature map
+
+        Tensor<double, 2> kernel_slice = gradient_unpooled.chip(filter_index, 2);
         for (int channel = 0; channel < input_channels; ++channel) {
-            for (int row = 0; row < feature_map.dimension(0) - filter_rows; ++row) {
-                for (int col = 0; col < feature_map.dimension(1) - filter_cols; ++col) {
-                    //todo: use convolve function instead of whatever's under here
-                    double gradient = gradient_unpooled(row, col, filter_index);
-                    for (int i = 0; i < filter_rows; ++i) {
-                        for (int j = 0; j < filter_cols; ++j) {
-                            gradient_sum_filter(i, j, channel, filter_index) +=
-                                    gradient * feature_map(row+i, col+j, filter_index);
-                        }
-                    }
-                }
-            }
+            Tensor<double, 2> input_slice = feature_map.chip(channel, 2);
+            Tensor<double, 2> output_slice = gradient_sum_filter
+                    .chip(filter_index, 3).chip(channel, 2);
+
+            convolve(input_slice, kernel_slice, output_slice);
         }
     }
-
-    //todo: set to 0 after changing params;
 }
 
 void ConvL::calc_gradient_feature_map() {

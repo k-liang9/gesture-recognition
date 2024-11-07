@@ -47,44 +47,27 @@ void ConvL::pool() {
     }
 }
 
-
-void sum_patch(Tensor<double, 3>& result, Tensor<double, 3>& feature_map, int row, int col, int filter_index) {
-    for (int i = 0; i < result.dimension(0); ++i) {
-        for (int j = 0; j < result.dimension(1); ++j) {
-            for (int k = 0; k < result.dimension(2); ++k) {
-                feature_map(row, col, filter_index) += result(i, j, k);
-            }
-        }
-    }
-}
-
-void ConvL::convolve(const Tensor<double, 3>& input) {
-    assert(input.dimension(2) == filter.dimension(2));
-
+void ConvL::apply_filter(const Tensor<double, 3>& input) {
     int feature_map_rows = input.dimension(0) - filter.dimension(0) + 1;
     int feature_map_cols = input.dimension(1) - filter.dimension(1) + 1;
     int num_filters = filter.dimension(3);
+    int num_channels = filter.dimension(2);
+
+    assert(input.dimension(2) == filter.dimension(2));
 
     feature_map.resize(feature_map_rows, feature_map_cols, num_filters);
 
     //memory usage tradeoff: calculate feature map by feature map instead of calculating every feature map at once
     for (int filter_index = 0; filter_index < num_filters; ++filter_index) {
-        for (int i = 0; i < feature_map_rows; ++i) {
-            for (int j = 0; j < feature_map_cols; ++j) {
-                //todo: use convolve function
-                //create patches
-                Tensor<double, 3> filter_slice = filter.chip(filter_index, 3);
-                Tensor<double, 3> input_slice = input.slice(Eigen::array<long, 3>{i, j, 0},
-                                                            filter_slice.dimensions());
 
-                //sum resulting patch
-                Tensor<double, 3> result = (filter_slice * input_slice).sum();
-                sum_patch(result, feature_map, i, j, filter_index);
-            }
+        Tensor<double, 2> output_slice = feature_map.chip(filter_index, 2);
+        for (int channel = 0; channel < num_channels; ++channel) {
+            Tensor<double, 2> input_slice = input.chip(channel, 2);
+            Tensor<double, 2> filter_slice = filter.chip(filter_index, 3).chip(channel, 2);
+
+            convolve(input_slice, filter_slice, output_slice);
         }
-    }
 
-    for (int i = 0; i < feature_map.dimension(2); ++i) {
-        feature_map.chip(i, 2) = feature_map.chip(i, 2) - biases(i);
+        output_slice = output_slice / static_cast<double>(num_filters) - biases(filter_index);
     }
 }

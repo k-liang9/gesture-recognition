@@ -36,8 +36,8 @@ public:
     //forward propagation
     void flatten();
     void pool();
-    void convolve(const Tensor<double, 3>& input);
-    void train_forward_final();
+    void apply_filter(const Tensor<double, 3>& input);
+    void train_forward_final_layer();
     void train_forward();
 
     //backprop
@@ -47,6 +47,7 @@ public:
     void calc_gradient_feature_map(); //full convolution(F, 180˚ rotated loss gradient)
     void add_gradient_filters();
     void add_gradient_biases();
+    //todo: set gradients to 0 after changing params;
     //unflatten/copy gradient, unrelu, unpool todo: get filter gradient, get bias gradient, get feature map gradient
 
     //normalization
