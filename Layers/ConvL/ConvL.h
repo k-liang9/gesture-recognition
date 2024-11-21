@@ -23,10 +23,11 @@ private:
     Tensor<double, 4> gradient_sum_filter{};
     VectorXd gradient_sum_biases{};
     Tensor<double, 3> gradient_feature_map{};
+    bool is_last{};
 
 public:
     //misc
-    ConvL(Tensor<double, 4> *f, VectorXd* b, activation a);
+    ConvL(Tensor<double, 4> *f, VectorXd* b, activation a, bool last);
     void setup_neighbour_layers(); //todo: is this needed?
     void convolve(const Tensor<double, 2>& input, const Tensor<double, 2>& kernel,
                   Tensor<double, 2>& output);
@@ -36,8 +37,7 @@ public:
     //forward propagation
     void flatten();
     void pool();
-    void apply_filter(const Tensor<double, 3>& input);
-    void train_forward_final_layer();
+    void apply_filter(const Tensor<double, 3>& input); //todo: link
     void train_forward();
 
     //backprop
@@ -47,8 +47,9 @@ public:
     void calc_gradient_feature_map(); //full convolution(F, 180˚ rotated loss gradient)
     void add_gradient_filters();
     void add_gradient_biases();
-    //todo: set gradients to 0 after changing params;
-    //unflatten/copy gradient, unrelu, unpool todo: get filter gradient, get bias gradient, get feature map gradient
+    void change_params();
+    void train_backward();
+    //unflatten/copy gradient, unrelu, unpool
 
     //normalization
     void reLU();
@@ -61,6 +62,7 @@ public:
     const Tensor<double, 4>& get_gradient_sum_filter() const { return gradient_sum_filter; }
     const VectorXd& get_gradient_sum_biases() const { return gradient_sum_biases; }
     const Tensor<double, 3>& get_gradient_unpooled() const { return gradient_unpooled; }
+    const bool get_is_last() const { return is_last; }
 
     //setters
     void set_pooled(const Tensor<double, 3>& p) { pooled = p; }
@@ -69,6 +71,7 @@ public:
     void set_gradient_sum_filter(const Tensor<double, 4>& gsf) { gradient_sum_filter = gsf; }
     void set_gradient_sum_biases(const VectorXd& gsb) { gradient_sum_biases = gsb; }
     void set_gradient_unpooled(const Tensor<double, 3>& gfm) { gradient_unpooled = gfm; }
+    const bool set_is_last(const bool last) { is_last = last; }
 };
 
 #endif //GESTURERECOGNITION_CONVL_H

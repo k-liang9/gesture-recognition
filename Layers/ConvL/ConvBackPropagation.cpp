@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include "../DenseL/DenseL.h"
+#include "../../Global.h"
 
 void ConvL::unflatten() {
     const int rows = pooled.dimension(0);
@@ -69,9 +70,9 @@ void ConvL::add_gradient_filters() {
 
     for (int filter_index = 0; filter_index < num_filters; ++filter_index) { //per filter: this indexes the depth of this layer's feature map
 
-        Tensor<double, 2> kernel_slice = gradient_unpooled.chip(filter_index, 2);
+        const Tensor<double, 2>& kernel_slice = gradient_unpooled.chip(filter_index, 2);
         for (int channel = 0; channel < input_channels; ++channel) {
-            Tensor<double, 2> input_slice = feature_map.chip(channel, 2);
+            const Tensor<double, 2>& input_slice = feature_map.chip(channel, 2);
             Tensor<double, 2> output_slice = gradient_sum_filter
                     .chip(filter_index, 3).chip(channel, 2);
 
@@ -95,12 +96,36 @@ void ConvL::calc_gradient_feature_map() {
 
         Tensor<double, 2> input_slice = gradient_feature_map.chip(input_channel, 2);
         for (int output_channel = 0; output_channel < output_channels; ++output_channel) {
-            Tensor<double, 2> output_slice = gradient_unpooled.chip(output_channel, 2).
+            const Tensor<double, 2>& output_slice = gradient_unpooled.chip(output_channel, 2).
                     reverse(Eigen::array<int, 2>({1, 0}));
-            Tensor<double, 2> filter_slice = filter.chip(output_channel, 3).chip(input_channel, 2);
+            const Tensor<double, 2>& filter_slice = filter.chip(output_channel, 3).chip(input_channel, 2);
             convolve_full(filter_slice, output_slice, input_slice);
         }
 
         input_slice = input_slice / static_cast<double>(output_channels);
     }
+}
+
+void ConvL::add_gradient_biases() {
+    assert(gradient_sum_biases.size() == gradient_unpooled.dimension(2));
+
+    for (int filter_index = 0; filter_index < gradient_sum_biases.size(); ++filter_index) {
+        const Tensor<double, 2>& layer = gradient_unpooled.chip(filter_index, 2).sum();
+        gradient_sum_biases[filter_index] += layer(0, 0);
+    }
+}
+
+void ConvL::change_params() {
+    gradient_sum_filter = gradient_sum_filter / static_cast<double>(Global::batch_size);
+    gradient_sum_biases = gradient_sum_biases / static_cast<double>(Global::batch_size);
+
+    filter -= gradient_sum_filter;
+    biases -= gradient_sum_biases;
+
+    gradient_sum_filter.setZero();
+    gradient_sum_biases.setZero();
+}
+
+void train_forward() {
+
 }

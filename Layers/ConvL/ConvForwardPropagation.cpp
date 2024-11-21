@@ -71,3 +71,11 @@ void ConvL::apply_filter(const Tensor<double, 3>& input) {
         output_slice = output_slice / static_cast<double>(num_filters) - biases(filter_index);
     }
 }
+
+void ConvL::train_forward() {
+    apply_filter();
+    pool();
+    if (is_last) {
+        flatten();
+    }
+}

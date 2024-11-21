@@ -6,9 +6,10 @@
 
 using namespace Eigen;
 
-ConvL::ConvL(Tensor<double, 4> *f, VectorXd* b, activation a) :
+ConvL::ConvL(Tensor<double, 4> *f, VectorXd* b, activation a, bool last) :
         filter(*f),
-        biases(*b)
+        biases(*b),
+        is_last{last}
 {
     set_activation_func(a);
     //todo: resize variables
