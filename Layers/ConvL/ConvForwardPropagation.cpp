@@ -10,7 +10,7 @@ void ConvL::flatten() {
     VectorXd& activations = get_activations();
     activations.resize(pooled.size());
     for (int i = 0; i < pooled.size(); ++i) {
-        activations(i) = pooled.data()[i];
+        activations[i] = pooled.data()[i];
     }
 }
 
@@ -72,8 +72,9 @@ void ConvL::apply_filter(const Tensor<double, 3>& input) {
     }
 }
 
-void ConvL::train_forward() {
-    apply_filter();
+void ConvL::train_forward(const Tensor<double, 3>& input) {
+    apply_filter(input);
+    reLU();
     pool();
     if (is_last) {
         flatten();

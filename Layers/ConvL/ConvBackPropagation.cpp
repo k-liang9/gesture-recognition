@@ -6,18 +6,12 @@
 #include "../DenseL/DenseL.h"
 #include "../../Global.h"
 
-void ConvL::unflatten() {
+void ConvL::unflatten(const VectorXd& gradient_logits) {
     const int rows = pooled.dimension(0);
     const int cols = pooled.dimension(1);
     const int channels = pooled.dimension(2);
 
     gradient_pooled.resize(rows, cols, channels);
-
-    DenseL* next_layer{dynamic_cast<DenseL*>(get_next_layer())};
-    if (!next_layer) {
-        throw std::runtime_error("Next layer is not of type DenseL");
-    }
-    VectorXd gradient_logits = next_layer->get_gradient_logits();
 
     assert(rows*cols*channels == gradient_logits.size());
 
@@ -32,13 +26,8 @@ void ConvL::unflatten() {
     }
 }
 
-void ConvL::copy_next_gradient() {
-    ConvL* next_layer{dynamic_cast<ConvL*>(get_next_layer())};
-    if (!next_layer) {
-        throw std::runtime_error("Next layer is not of type ConvL");
-    }
-
-    gradient_pooled = next_layer->get_gradient_unpooled();
+void ConvL::copy_next_gradient(const Tensor<double, 3>& next_layer_gradient) {
+    gradient_pooled = next_layer_gradient;
 }
 
 void ConvL::unpool() {
@@ -126,6 +115,22 @@ void ConvL::change_params() {
     gradient_sum_biases.setZero();
 }
 
-void train_forward() {
+//for last layer
+void ConvL::train_backward(const VectorXd& gradient_logits) {
+    unflatten(gradient_logits);
+    backprop();
+}
 
+//for non-last layer
+void ConvL::train_backward(const Tensor<double, 3>& next_layer_gradient) {
+    copy_next_gradient(next_layer_gradient);
+    backprop();
+}
+
+void ConvL::backprop() {
+    apply_reLU_derivative();
+    unpool();
+    calc_gradient_feature_map();
+    add_gradient_biases();
+    add_gradient_filters();
 }

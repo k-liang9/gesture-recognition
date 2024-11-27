@@ -17,6 +17,7 @@ private:
     const int pool_size{2};
     Tensor<double, 3> pooled{};
     Tensor<std::pair<int, int>, 3> pooled_index{};
+
     Tensor<double, 3> gradient_pooled{}; //next layer
     Tensor<double, 3> gradient_unpooled{}; //next layer
 
@@ -28,7 +29,6 @@ private:
 public:
     //misc
     ConvL(Tensor<double, 4> *f, VectorXd* b, activation a, bool last);
-    void setup_neighbour_layers(); //todo: is this needed?
     void convolve(const Tensor<double, 2>& input, const Tensor<double, 2>& kernel,
                   Tensor<double, 2>& output);
     void convolve_full(const Tensor<double, 2>& input, const Tensor<double, 2>& kernel,
@@ -37,18 +37,20 @@ public:
     //forward propagation
     void flatten();
     void pool();
-    void apply_filter(const Tensor<double, 3>& input); //todo: link
-    void train_forward();
+    void apply_filter(const Tensor<double, 3>& input);
+    void train_forward(const Tensor<double, 3>& input); //todo
 
     //backprop
-    void unflatten();
-    void copy_next_gradient();
+    void unflatten(const VectorXd& gradient_logits);
+    void copy_next_gradient(const Tensor<double, 3>& next_layer_gradient);
     void unpool();
     void calc_gradient_feature_map(); //full convolution(F, 180˚ rotated loss gradient)
     void add_gradient_filters();
     void add_gradient_biases();
     void change_params();
-    void train_backward();
+    void train_backward(const VectorXd& gradient_logits);
+    void train_backward(const Tensor<double, 3>& next_layer_gradient);
+    void backprop();
     //unflatten/copy gradient, unrelu, unpool
 
     //normalization

@@ -12,7 +12,8 @@ ConvL::ConvL(Tensor<double, 4> *f, VectorXd* b, activation a, bool last) :
         is_last{last}
 {
     set_activation_func(a);
-    //todo: resize variables
+    gradient_sum_filter.resize(filter.dimensions());
+    gradient_sum_biases.resize(filter.size());
 }
 
 void ConvL::convolve(const Tensor<double, 2>& input, const Tensor<double, 2>& kernel,
