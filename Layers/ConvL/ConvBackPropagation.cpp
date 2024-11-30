@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include "../DenseL/DenseL.h"
-#include "../../Global.h"
+#include "../../Inc/Global.h"
 
 void ConvL::unflatten(const VectorXd& gradient_logits) {
     const int rows = pooled.dimension(0);

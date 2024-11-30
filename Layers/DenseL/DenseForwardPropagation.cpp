@@ -7,9 +7,9 @@
 
 using namespace Eigen;
 
-void DenseL::propagate() {
-    assert(get_prev_layer()->get_activations().size() == weights.cols());
-    get_activations() = weights * get_prev_layer()->get_activations() - biases;
+void DenseL::propagate(const VectorXd& prev_activations) {
+    assert(prev_activations.size() == weights.cols());
+    get_activations() = weights * prev_activations - biases;
 }
 
 void DenseL::dropout(float dropout_rate) {
@@ -41,8 +41,8 @@ void DenseL::dropout(float dropout_rate) {
     }
 }
 
-void DenseL::train_forward() {
-    propagate();
+void DenseL::train_forward(const VectorXd& prev_activations) {
+    propagate(prev_activations);
 
     if (used_dropout) {
         dropout(dropout_rate);
@@ -59,11 +59,4 @@ void DenseL::train_forward() {
             std::cout << "invalid activation function";
             break;
     }
-}
-
-void DenseL::reset_gradients() {
-    dropout_used_count.setZero();
-    gradient_logits.setZero();
-    gradient_sum_weights.setZero();
-    gradient_sum_biases.setZero();
 }

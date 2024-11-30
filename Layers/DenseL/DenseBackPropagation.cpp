@@ -2,7 +2,7 @@
 #include "../Layer.h"
 #include <Eigen/Dense>
 #include <cassert>
-#include "../../Global.h"
+#include "../../Inc/Global.h"
 
 using namespace Eigen;
 
@@ -11,15 +11,14 @@ void DenseL::add_gradient_biases() {
     gradient_sum_biases += gradient_logits;
 }
 
-void DenseL::add_gradient_weights() {
+void DenseL::add_gradient_weights(const VectorXd& prev_activation) {
     assert(gradient_sum_weights.cols() == get_activations().size());
-    gradient_sum_weights += get_prev_layer()->get_activations().transpose() * gradient_logits;
+    gradient_sum_weights += prev_activation.transpose() * gradient_logits;
 }
 
-void DenseL::calc_gradient_logits() {
-    DenseL* next_layer = dynamic_cast<DenseL*>(get_next_layer());
-    assert(gradient_logits.size() == next_layer->get_weights().cols());
-    gradient_logits = (next_layer->get_weights().transpose() * next_layer->get_gradient_logits()).rowwise().sum();
+void DenseL::calc_gradient_logits(const MatrixXd& next_weights, const VectorXd& next_gradient_logits) {
+    assert(gradient_logits.size() == next_weights.cols());
+    gradient_logits = (next_weights.transpose() * next_gradient_logits).rowwise().sum();
     apply_reLU_derivative();
 }
 
@@ -29,15 +28,16 @@ void DenseL::calc_CCEL_derivative(VectorXd &expected) {
 }
 
 
-void DenseL::backprop_nonoutput() {
-    calc_gradient_logits();
-    add_gradient_weights();
+void DenseL::backprop_nonoutput(const VectorXd& prev_activation,
+                                const MatrixXd& next_weights, const VectorXd& next_gradient_logits) {
+    calc_gradient_logits(next_weights, next_gradient_logits);
+    add_gradient_weights(prev_activation);
     add_gradient_biases();
 }
 
-void DenseL::backprop_output(VectorXd& expected) {
+void DenseL::backprop_output(VectorXd& expected, const VectorXd& prev_activation) {
     calc_CCEL_derivative(expected);
-    add_gradient_weights();
+    add_gradient_weights(prev_activation);
     add_gradient_biases();
 }
 
@@ -62,4 +62,9 @@ void DenseL::change_params() {
 
     biases -= gradient_biases;
     weights -= gradient_weights;
+
+    dropout_used_count.setZero();
+    gradient_logits.setZero();
+    gradient_sum_weights.setZero();
+    gradient_sum_biases.setZero();
 }

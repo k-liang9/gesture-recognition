@@ -5,10 +5,10 @@ set(CMAKE_CXX_STANDARD 23)
 
 find_package(Eigen3 3.4 REQUIRED HINTS /opt/homebrew/opt/eigen)
 
-add_executable(GestureRecognition main.cpp
+add_executable(GestureRecognition Src/main.cpp
         Layers/DenseL/DenseNormalization.cpp
         Layers/DenseL/DenseL.h
-        Global.h
+        Inc/Global.h
         Layers/Layer.cpp
         Layers/Layer.h
         Layers/ConvL/ConvForwardPropagation.cpp

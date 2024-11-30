@@ -21,23 +21,22 @@ private:
 
 public:
     DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout);
-    void setup_neighbour_layers(); //todo: is this needed?
 
     //forward propagation
-    void propagate();
+    void propagate(const VectorXd& prev_activations);
     void dropout(float percent);
-    void train_forward();
+    void train_forward(const VectorXd& prev_activations);
 
     //backpropagation
     void calc_loss(VectorXd& expected); //CCEL //stored in gradient_logits as they are parallel
-    void calc_gradient_logits();
+    void calc_gradient_logits(const MatrixXd& next_weights, const VectorXd& next_gradient_logits);
     void calc_CCEL_derivative(VectorXd &expected);
-    void add_gradient_weights();
+    void add_gradient_weights(const VectorXd& prev_activation);
     void add_gradient_biases();
-    void backprop_nonoutput();
-    void backprop_output(VectorXd& expected);
+    void backprop_nonoutput(const VectorXd& prev_activation,
+                            const MatrixXd& next_weights, const VectorXd& next_gradient_logits);
+    void backprop_output(VectorXd& expected, const VectorXd& prev_activation);
     void change_params();
-    void reset_gradients();
 
     //normalization
     void reLU();

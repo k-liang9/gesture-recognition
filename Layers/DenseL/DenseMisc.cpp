@@ -17,7 +17,3 @@ DenseL::DenseL(MatrixXd *w, VectorXd *b, activation a, bool dropout) :
     gradient_sum_weights.resize(weights.rows(), weights.cols());
     gradient_sum_biases.resize(biases.size());
 }
-
-void DenseL::setup_neighbour_layers() {
-
-}

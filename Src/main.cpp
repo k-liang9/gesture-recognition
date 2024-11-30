@@ -1,5 +1,8 @@
 #include <iostream>
-#include "Layers/DenseL/DenseL.h"
+#include <vector>
+#include "../Layers/DenseL/DenseL.h"
+#include "../Layers/Layer.h"
+#include "../Layers/ConvL/ConvL.h"
 #include <Eigen/Dense>
 
 /*
@@ -18,8 +21,15 @@
 
  Mini-batch training: 32
  */
+std::vector<Layer> network{};
+
+void createLayers();
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
     return 0;
+}
+
+void createLayers() {
+
 }
